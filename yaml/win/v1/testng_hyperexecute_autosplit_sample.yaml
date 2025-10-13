@@ -10,7 +10,7 @@ pre:
 
 testDiscovery:
   type: raw
-  mode: dynamic
+  mode: static
   command: grep 'test name' xml/testng_win.xml | awk '{print$2}' | sed 's/name=//g' | sed 's/\x3e//g'
 
 testRunnerCommand: mvn test `-Dplatname=win `-Dmaven.repo.local=./.m2 dependency:resolve `-DselectedTests=$test
@@ -19,3 +19,6 @@ retryOnFailure: true
 maxRetries: 1
 
 jobLabel: [selenium-testng, win, v1, autosplit]
+
+project:
+  id: ${project_id} 
