@@ -18,4 +18,4 @@ testRunnerCommand: mvn test -Dplatname=linux -Dmaven.repo.local=./.m2 dependency
 retryOnFailure: true
 maxRetries: 1
 
-jobLabel: [selenium-testng, linux, v1, autosplit]
+jobLabel: [selenium-testng, linux, v1, autosplit, sajdbajdjasdjsahdjkashjkdha, asjbdjsabdjasbdandmsada,asjdba]
