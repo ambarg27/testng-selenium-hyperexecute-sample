@@ -56,3 +56,6 @@ partialReports:
   frameworkName: extent
 
 jobLabel: [selenium-testng, hybrid]
+
+project:
+  id: ${project_id}
