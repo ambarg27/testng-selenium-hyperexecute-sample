@@ -50,4 +50,4 @@ partialReports:
 
 jobLabel: [testng-selenium, win11, autosplit]
 
-smartRetry: true
+# smartRetry: true
