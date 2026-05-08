@@ -20,5 +20,6 @@ maxRetries: 1
 
 jobLabel: [selenium-testng, linux, v1, autosplit, sajdbajdjasdjsahdjkashjkdha]
 
-project:
-  id: ${project_id}
+# project:
+#   id: ${project_id}
+onpremEnv: ocp-pre-prod
