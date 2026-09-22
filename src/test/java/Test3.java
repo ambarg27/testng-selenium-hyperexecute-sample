@@ -1,123 +1,48 @@
 import org.openqa.selenium.*;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
 import org.testng.annotations.*;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.time.Duration;
-import com.relevantcodes.extentreports.ExtentReports;
-import com.relevantcodes.extentreports.ExtentTest;
-import com.relevantcodes.extentreports.LogStatus;
 
-public class Test3
-{
-    WebDriver driver = null;
+// jp10 rerun sample — deterministic. Test_3 FAILS on chrome (default), passes on edge.
+public class Test3 {
+    RemoteWebDriver driver = null;
     public static String status = "passed";
-    String username = Test1.username;
-    String access_key = Test1.access_key;
-
-//    String testURL = "https://todomvc.com/examples/react/#/";
-    String testURL = "https://lambdatest.github.io/sample-todo-app/";
-    String testURLTitle = "Sample page - lambdatest.com";
+    static String username = System.getenv("LT_USERNAME");
+    static String access_key = System.getenv("LT_ACCESS_KEY");
+    static String hub = System.getenv("LT_HUB_HOST") != null ? System.getenv("LT_HUB_HOST") : "hub.lambdatest.com";
+    String page = "data:text/html,<html><head><title>Rerun Sample</title></head><body><h1 id='hdr'>todo</h1></body></html>";
 
     @BeforeMethod
-    @Parameters(value={"browser","version","platform", "resolution"})
-    public void testSetUp(String browser, String version, String platform, String resolution) throws Exception
-    {
-        String platformName = System.getenv("HYPEREXECUTE_PLATFORM") != null ? System.getenv("HYPEREXECUTE_PLATFORM") : platform;
-        
-        DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setCapability("build", "[HyperExecute - 3] Demonstration of the TestNG Framework");
-        capabilities.setCapability("name", "[HyperExecute - 3] Demonstration of the TestNG Framework");
-
-        capabilities.setCapability("platform", System.getenv("HYPEREXECUTE_PLATFORM"));
-        capabilities.setCapability("browserName", browser);
-        capabilities.setCapability("version",version);
-
-        capabilities.setCapability("tunnel",false);
-        capabilities.setCapability("network",true);
-        capabilities.setCapability("console",true);
-        capabilities.setCapability("visual",true);
-        
-        capabilities.setCapability("accessibility", true); // Enable accessibility testing
-        capabilities.setCapability("accessibility.wcagVersion", "wcag21a"); // Specify WCAG version (e.g., WCAG 2.1 Level A)
-        capabilities.setCapability("accessibility.bestPractice", false); // Exclude best practice issues from results
-        capabilities.setCapability("accessibility.needsReview", true); // Include issues that need review
-
-        try
-        {
-            driver = new RemoteWebDriver(new URL("https://" + username + ":" + access_key + "@hub.lambdatest.com/wd/hub"), capabilities);
-        }
-        catch (MalformedURLException e)
-        {
-            System.out.println("Invalid grid URL");
-        }
-        System.out.println("Started session");
+    @Parameters(value={"browser","version","platform","resolution"})
+    public void setUp(String browser, String version, String platform, String resolution) throws Exception {
+        String br = System.getProperty("browser", browser);
+        DesiredCapabilities caps = new DesiredCapabilities();
+        caps.setCapability("build", "[HyperExecute] jp10 Rerun Sample");
+        caps.setCapability("name", "Test_3 (" + br + ")");
+        caps.setCapability("platform", System.getenv("HYPEREXECUTE_PLATFORM") != null ? System.getenv("HYPEREXECUTE_PLATFORM") : platform);
+        caps.setCapability("browserName", br);
+        caps.setCapability("version", version);
+        caps.setCapability("network", true);
+        driver = new RemoteWebDriver(new URL("https://" + username + ":" + access_key + "@" + hub + "/wd/hub"), caps);
     }
 
-    @Test(description="To Do App on React App")
-    public void test3_element_addition_1() throws InterruptedException
-    {   ExtentReports extent = new ExtentReports("target/surefire-reports/html/extentReport.html");
-        ExtentTest test1 = extent.startTest("demo application test 3-1", "To Do App test 1");
-
-        driver.get(testURL);
-        Thread.sleep(5000);
-
-        test1.log(LogStatus.PASS, "URL is opened");
-        WebDriverWait wait = new WebDriverWait(driver, 5);
-        test1.log(LogStatus.PASS, "Wait created");
-
-        By textField = By.id("sampletodotex");
-
-        WebElement addText = driver.findElement(textField);
-
-        int item_count = 5;
-
-        for (int i = 1; i <= item_count; i++) {
-            addText.click();
-            addText.sendKeys("Adding a new item " + i + Keys.ENTER);
-            test1.log(LogStatus.PASS, "New item No. " + i + " is added");
-            Thread.sleep(2000);
+    @Test(description="deterministic rerun test 3")
+    public void test3() {
+        String br = System.getProperty("browser", "chrome").toLowerCase();
+        driver.get(page);
+        Assert.assertEquals(driver.getTitle(), "Rerun Sample", "page loaded");
+        if (!br.contains("edge")) {
+            status = "failed";
+            Assert.fail("Test_3 intentional failure on chrome (rerun testing)");
         }
-
-        WebElement temp_element;
-
-        int totalCount = item_count+5;
-        int remaining = totalCount-1;
-
-        for (int i = 1; i <= totalCount; i++, remaining--) {
-
-            String xpath = "(//input[@type='checkbox'])["+i+"]";
-
-            driver.findElement(By.xpath(xpath)).click();
-            Thread.sleep(500);
-            test1.log(LogStatus.PASS, "Item No. " + i + " marked completed");
-            By remainingItem = By.className("ng-binding");
-            String actualText = driver.findElement(remainingItem).getText();
-            String expectedText = remaining+" of "+totalCount+" remaining";
-
-            if (!expectedText.equals(actualText)) {
-                test1.log(LogStatus.FAIL, "Wrong Text Description");
-                status = "failed";
-            }
-            Thread.sleep(500);
-
-            test1.log(LogStatus.PASS, "Item No. " + i + " completed");
-        }
-
-        extent.endTest(test1);
-        extent.flush();
-
-        /* Once you are outside this code, the list would be empty */
     }
 
     @AfterMethod
-    public void tearDown()
-    {
-        if (driver != null)
-        {
-            ((JavascriptExecutor) driver).executeScript("lambda-status=" + status);
+    public void tearDown() {
+        if (driver != null) {
+            try { ((JavascriptExecutor) driver).executeScript("lambda-status=" + status); } catch (Exception e) {}
             driver.quit();
         }
     }

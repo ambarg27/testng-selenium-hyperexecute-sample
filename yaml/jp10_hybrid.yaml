@@ -1,0 +1,39 @@
+version: 0.1
+globalTimeout: 90
+testSuiteTimeout: 90
+testSuiteStep: 90
+
+runson: ${matrix.os}
+autosplit: true
+concurrency: 2
+parallelism: 1
+
+matrix:
+  os: [linux]
+
+env:
+  LT_HUB_HOST: stage-hub.lambdatestinternal.com
+
+testDiscovery:
+  type: raw
+  mode: dynamic
+  linuxCommand: |
+    grep 'test name' xml/testng_linux.xml | awk '{print$2}' | sed 's/name=//g' | sed 's/\x3e//g'
+
+pre:
+  - mvn -q dependency:resolve -Dmaven.repo.local=./.m2
+
+linuxTestRunnerCommand: mvn test -Dplatname=linux -Dmaven.repo.local=./.m2 -DselectedTests=$test
+
+retryOnFailure: false
+
+report: true
+partialReports:
+  location: target/surefire-reports/html
+  type: html
+  frameworkName: extent
+
+jobLabel: [te-27603, jp10, hybrid]
+
+project:
+  id: ${project_id}

@@ -1,0 +1,30 @@
+version: 0.1
+globalTimeout: 90
+testSuiteTimeout: 90
+testSuiteStep: 90
+
+runson: linux
+
+matrix:
+  test: [Test_1, Test_3]
+  browser: [chrome, MicrosoftEdge]
+
+env:
+  LT_HUB_HOST: stage-hub.lambdatestinternal.com
+
+pre:
+  - mvn -q dependency:resolve -Dmaven.repo.local=./.m2
+
+testSuites:
+  - mvn test -Dplatname=linux -Dmaven.repo.local=./.m2 -DselectedTests=${matrix.test} -Dbrowser=${matrix.browser}
+
+report: true
+partialReports:
+  location: target/surefire-reports/html
+  type: html
+  frameworkName: extent
+
+jobLabel: [te-27603, jp10, matrix2d]
+
+project:
+  id: ${project_id}
