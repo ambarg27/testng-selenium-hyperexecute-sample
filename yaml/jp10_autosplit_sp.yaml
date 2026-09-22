@@ -1,0 +1,36 @@
+version: 0.1
+globalTimeout: 90
+testSuiteTimeout: 90
+testSuiteStep: 90
+
+runson: linux
+autosplit: true
+concurrency: 2
+
+env:
+  LT_HUB_HOST: stage-hub.lambdatestinternal.com
+
+sourcePayload:
+  platform: git
+  link: https://github.com/ambarg27/testng-selenium-hyperexecute-sample
+
+testDiscovery:
+  type: raw
+  mode: dynamic
+  command: |
+    grep 'test name' xml/testng_linux.xml | awk '{print$2}' | sed 's/name=//g' | sed 's/\x3e//g'
+
+pre:
+  - mvn -q dependency:resolve -Dmaven.repo.local=./.m2
+
+testRunnerCommand: mvn test -Dplatname=linux -Dmaven.repo.local=./.m2 -DselectedTests=$test
+
+retryOnFailure: false
+
+report: true
+partialReports:
+  location: target/surefire-reports/html
+  type: html
+  frameworkName: extent
+
+jobLabel: [te-27603, jp10, autosplit, remote, sourcePayload]
