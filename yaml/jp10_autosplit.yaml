@@ -12,7 +12,7 @@ env:
 
 testDiscovery:
   type: raw
-  mode: dynamic
+  mode: remote
   command: |
     grep 'test name' xml/testng_linux.xml | awk '{print$2}' | sed 's/name=//g' | sed 's/\x3e//g'
 
@@ -30,6 +30,3 @@ partialReports:
   frameworkName: extent
 
 jobLabel: [te-27603, jp10, autosplit, remote]
-
-project:
-  id: ${project_id}
