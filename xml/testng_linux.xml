@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<!-- C06 branch: suite reduced to a SINGLE conditional test so each matrix group runs only it
-     (fails only when variant=b). Full-suite execution therefore yields exactly one failed group. -->
+<!-- C06 branch: Test_1 fails deterministically, Test_2 passes deterministically.
+     Matrix runs both across browsers; -DselectedTests=$tests isolates each group to one test. -->
 <suite name="Linux: TestNG Execution using HyperExecute" thread-count="1" parallel="methods">
 	<listeners>
 		<listener class-name="org.uncommons.reportng.HTMLReporter"/>
 		<listener class-name="org.uncommons.reportng.JUnitXMLReporter"/>
 	</listeners>
-	<test name="MatrixCond">
+	<test name="Test_1">
 			<classes>
-				<class name="MatrixCond" />
+				<class name="Test1" />
+			</classes>
+	</test>
+	<test name="Test_2">
+			<classes>
+				<class name="Test2" />
 			</classes>
 	</test>
 </suite>

@@ -1,23 +1,27 @@
 version: 0.1
-runson: linux
+runson: ${matrix.os}
 
-# C06 / RFC 9.8 P4 cross-group positional selection (isolation run).
-# testng_linux.xml is reduced to a single conditional test (MatrixCond) on this branch, so each
-# matrix group runs only it. 3 groups, identical recorded unit name, distinct combination {variant};
-# MatrixCond fails only when variant=b -> exactly the middle group fails.
+# C06 / RFC 9.8 P4 cross-group positional selection (1-of-N mix).
+# tests x browser => 4 groups, all with an IDENTICAL recorded unit name; combination distinguishes them.
+# -DselectedTests=$tests isolates each group to one test: Test_1 groups FAIL, Test_2 groups PASS.
+# => 2 failed + 2 passed, same name. Failed-subset rerun must select ONLY the 2 Test_1 positions.
 matrix:
-  variant: [a, b, c]
+  tests: ["Test_1", "Test_2"]
+  browser: ["Chrome", "MicrosoftEdge"]
+  version: ["latest"]
+  os: ["linux"]
 
 project:
   id: 01M3CG3FB031AFKD3K6GSPJT6M
 
 pre:
-  - mvn -q dependency:resolve -Dmaven.repo.local=./.m2
+  - mvn dependency:resolve -Dmaven.repo.local=m2_cache_dir
 
-# variant exported so the surefire-forked test JVM inherits it (System.getenv).
 testSuites:
-  - variant=${matrix.variant} mvn test -Dplatname=linux -Dmaven.repo.local=./.m2
+  - mvn test -Dplatname=linux -Dmaven.repo.local=m2_cache_dir -DselectedTests=$tests
 
-report: true
+parallelism: 1
+
 retryOnFailure: false
+
 jobLabel: [te27603-c06-matrix]
