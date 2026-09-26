@@ -2,12 +2,12 @@ version: 0.1
 runson: linux
 
 # C06 / RFC 9.8 P4 cross-group positional selection.
-# 3 matrix groups run the SAME testSuites command (so the recorded unit name is identical),
-# differing only by combination {sel}. Two select a passing leaf, one selects a failing leaf.
-# Only the middle group (sel=MFail) fails -> subset rerun must select exactly that group by
-# position/combination, not every group sharing the (identical) name.
+# 3 matrix groups run the SAME command (identical recorded unit name), differing only by
+# combination {variant}. The suite (testng_c06matrix.xml) contains ONE conditional test that
+# fails only when variant=b -> exactly the middle group fails. Subset rerun must then select
+# only that group by position/combination, not every group sharing the (identical) name.
 matrix:
-  sel: [MPassA, MFail, MPassC]
+  variant: [a, b, c]
 
 project:
   id: 01M3CG3FB031AFKD3K6GSPJT6M
@@ -15,8 +15,10 @@ project:
 pre:
   - mvn -q dependency:resolve -Dmaven.repo.local=./.m2
 
+# variant is exported so surefire's forked test JVM inherits it (System.getenv).
+# platname=c06matrix selects xml/testng_c06matrix.xml (single test) so nothing else can fail.
 testSuites:
-  - mvn test -Dplatname=linux -Dmaven.repo.local=./.m2 -DselectedTests=${matrix.sel}
+  - variant=${matrix.variant} mvn test -Dplatname=c06matrix -Dmaven.repo.local=./.m2
 
 report: true
 retryOnFailure: false
