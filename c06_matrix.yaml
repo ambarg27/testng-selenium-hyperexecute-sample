@@ -1,11 +1,10 @@
 version: 0.1
 runson: linux
 
-# C06 / RFC 9.8 P4 cross-group positional selection.
-# 3 matrix groups run the SAME command (identical recorded unit name), differing only by
-# combination {variant}. The suite (testng_c06matrix.xml) contains ONE conditional test that
-# fails only when variant=b -> exactly the middle group fails. Subset rerun must then select
-# only that group by position/combination, not every group sharing the (identical) name.
+# C06 / RFC 9.8 P4 cross-group positional selection (isolation run).
+# testng_linux.xml is reduced to a single conditional test (MatrixCond) on this branch, so each
+# matrix group runs only it. 3 groups, identical recorded unit name, distinct combination {variant};
+# MatrixCond fails only when variant=b -> exactly the middle group fails.
 matrix:
   variant: [a, b, c]
 
@@ -15,10 +14,9 @@ project:
 pre:
   - mvn -q dependency:resolve -Dmaven.repo.local=./.m2
 
-# variant is exported so surefire's forked test JVM inherits it (System.getenv).
-# platname=c06matrix selects xml/testng_c06matrix.xml (single test) so nothing else can fail.
+# variant exported so the surefire-forked test JVM inherits it (System.getenv).
 testSuites:
-  - variant=${matrix.variant} mvn test -Dplatname=c06matrix -Dmaven.repo.local=./.m2
+  - variant=${matrix.variant} mvn test -Dplatname=linux -Dmaven.repo.local=./.m2
 
 report: true
 retryOnFailure: false
