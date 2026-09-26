@@ -42,4 +42,9 @@
 				<class name="Test4" />
 			</classes>
 	</test>
+	<test name="DupName">
+			<classes>
+				<class name="DupNameTest" />
+			</classes>
+	</test>
 </suite>
