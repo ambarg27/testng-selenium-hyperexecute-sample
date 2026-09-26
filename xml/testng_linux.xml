@@ -47,4 +47,9 @@
 				<class name="DupNameTest" />
 			</classes>
 	</test>
+	<test name="MatrixDup">
+			<classes>
+				<class name="MatrixDupTest" />
+			</classes>
+	</test>
 </suite>
