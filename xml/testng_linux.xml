@@ -42,4 +42,9 @@
 				<class name="Test4" />
 			</classes>
 	</test>
+	<test name="TPass">
+			<classes>
+				<class name="TPass" />
+			</classes>
+	</test>
 </suite>
