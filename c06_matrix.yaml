@@ -1,0 +1,23 @@
+version: 0.1
+runson: linux
+
+# C06 / RFC 9.8 P4 cross-group positional selection.
+# 3 matrix groups run the SAME testSuites command (so the recorded unit name is identical),
+# differing only by combination {sel}. Two select a passing leaf, one selects a failing leaf.
+# Only the middle group (sel=MFail) fails -> subset rerun must select exactly that group by
+# position/combination, not every group sharing the (identical) name.
+matrix:
+  sel: [MPassA, MFail, MPassC]
+
+project:
+  id: 01M3CG3FB031AFKD3K6GSPJT6M
+
+pre:
+  - mvn -q dependency:resolve -Dmaven.repo.local=./.m2
+
+testSuites:
+  - mvn test -Dplatname=linux -Dmaven.repo.local=./.m2 -DselectedTests=${matrix.sel}
+
+report: true
+retryOnFailure: false
+jobLabel: [te27603-c06-matrix]

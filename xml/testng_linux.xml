@@ -52,4 +52,19 @@
 				<class name="MatrixDupTest" />
 			</classes>
 	</test>
+	<test name="MPassA">
+			<classes>
+				<class name="MatrixPass" />
+			</classes>
+	</test>
+	<test name="MFail">
+			<classes>
+				<class name="MatrixFail" />
+			</classes>
+	</test>
+	<test name="MPassC">
+			<classes>
+				<class name="MatrixPass" />
+			</classes>
+	</test>
 </suite>
