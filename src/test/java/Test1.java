@@ -42,7 +42,7 @@ public class Test1 {
     @AfterMethod
     public void tearDown() {
         if (driver != null) {
-            try { ((JavascriptExecutor) driver).executeScript("lambda-status=" + status); } catch (Exception e) {}
+            try { ((JavascriptExecutor) driver).executeScript("lambda-status=" + "failed"); } catch (Exception e) {}
             driver.quit();
         }
     }
