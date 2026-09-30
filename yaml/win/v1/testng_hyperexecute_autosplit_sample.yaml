@@ -38,7 +38,7 @@ uploadArtefacts:
 testDiscovery:
   type: raw
   mode: remote
-  command: grep 'test name' xml/testng_win.xml | awk '{print$2}' | sed 's/name=//g' | sed 's/\x3e//g'
+  command: cat test.txt
 
 testRunnerCommand: mvn test `-Dplatname=win dependency:resolve `-DselectedTests=$test
 
@@ -50,6 +50,7 @@ partialReports:
 
 jobLabel: [testng-selenium, win11, autosplit]
 
-
+project:
+  id: ${project_id}
 
 # smartRetry: true
