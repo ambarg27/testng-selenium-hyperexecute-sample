@@ -79,6 +79,12 @@ public class Test3 {
                 browserOptions = new ChromeOptions();
         }
 
+        // Wells on-prem: route the browser through the corporate proxy so external sites load (no direct egress).
+        if (browserOptions instanceof ChromeOptions) {
+            ((ChromeOptions) browserOptions).addArguments("--proxy-server=http://proxy-nsp.wellsfargo.com:8080", "--ignore-ssl-errors", "--ignore-certificate-errors");
+        } else if (browserOptions instanceof EdgeOptions) {
+            ((EdgeOptions) browserOptions).addArguments("--proxy-server=http://proxy-nsp.wellsfargo.com:8080", "--ignore-ssl-errors", "--ignore-certificate-errors");
+        }
         browserOptions.setCapability("browserVersion", version);
         browserOptions.setCapability("platformName", platformName);
         browserOptions.setCapability("LT:Options", ltOptions);
